@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: url-shortener-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - url-network
+
+  app:
+    build: .
+    container_name: url-shortener-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MONGO_URL=mongodb+srv://ralekaru_db_user:Vedant123@cluster0.ri6l8li.mongodb.net/?appName=Cluster0
+
+    depends_on:
+      - redis
+    networks:
+      - url-network
+
+volumes:
+  redis-data:
+    driver: local
+
+networks:
+  url-network:
+    driver: bridge

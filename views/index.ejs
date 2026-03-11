@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #bcbccd;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #c4c4e8;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 20px rgba(177, 202, 228, 0.5);
+            width: 500px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out, pulseBorder 3s infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseBorder {
+            0% {
+                box-shadow: 0px 0px 20px rgba(94, 143, 193, 0.5);
+            }
+
+            50% {
+                box-shadow: 0px 0px 30px rgba(99, 144, 190, 0.7);
+            }
+
+            100% {
+                box-shadow: 0px 0px 20px rgba(82, 128, 175, 0.5);
+            }
+        }
+
+        h1 {
+            color: #2d2d2d;
+            margin-bottom: 30px;
+            font-size: 28px;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #5a5a5c;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            border: 2px solid #c7c7f0;
+            background-color: #b8b8de;
+            color: #d8cee2;
+            font-size: 20px;
+            transition: border-color 0.3s;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        input[type="text"]:focus {
+            border-color: #c0bdc5;
+            outline: none;
+        }
+
+        button {
+            padding: 16px 32px;
+            background-color: #9db07a;
+            color: #0a0909;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #8b46c0;
+            color: white;
+        }
+
+        p {
+            color: black;
+            margin-top: 25px;
+            font-size: 22px;
+            font-weight: bold;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        a {
+            color: #535550;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+</head>
+<body>
+   <div class="container">
+    <h1>URL Shortener</h1>
+    <form action="/url/shorten" method="post">
+        <label for="longUrl">Enter Long URL :</label>
+        <input type="text" id="longUrl" name="longUrl" required>
+        <button type="submit">Submit</button>
+
+    </form>
+
+    <% if(shortUrl) { %>
+        <p>Short Url : <a href="/url/<%=shortUrl %>" target="_blank">
+                http://localhost:3000/url/<%= shortUrl %>
+        </a>
+    
+    </p>
+
+   <% } %>
+
+   </div>
+    
+</body>
+</html>
