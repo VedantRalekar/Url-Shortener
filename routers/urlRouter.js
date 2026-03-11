@@ -12,8 +12,6 @@ router.get("/:shortCode",async function(req, res){
    try {
         const cachedUrl = await redisClient.get(`short:${shortCode}`);
             if(cachedUrl){
-            //    redisClient.incr(`clicks:${shortCode}`)
-            //                 .catch(err => console.error('Redis incr error:', err));
                 return res.redirect(cachedUrl); 
             }
 
@@ -24,8 +22,6 @@ router.get("/:shortCode",async function(req, res){
             //Store in Redis with 24h TTL
             await redisClient.setEx(`short:${shortCode}`,86400, urlDoc.longUrl);
 
-            // await redisClient.incr(`clicks:${shortCode}`);
-
            return  res.redirect(urlDoc.longUrl);
     } catch(error){
     
@@ -34,14 +30,6 @@ router.get("/:shortCode",async function(req, res){
                 
     }
 
-//    console.log(shortCode);
-//    const urlRecord = await urlModel.findOne({shortCode});
-       
-//        if(urlRecord){
-//         res.redirect(urlRecord.longUrl);
-//        }else {
-//         res.status(404).send("Url not found.")
-//        }
        
 });
 
@@ -78,15 +66,6 @@ router.post("/shorten",rateLimiter({windowSeconds: 60, maxRequests: 5, keyPrefix
         console.error('Create error:', error);
        return  res.status(500).send({ error: 'Server error' });
     }
-
-    // const shortCode = shortid.generate();
-    // const shortUrl = `http://localhost:3000/url/${shortCode}`;
-    
-    //  const  newurl = new urlModel({shortCode, longUrl});
-    //  await newurl.save();
-
-
-    //  res.render("index", {shortUrl : shortCode });
 });
 
 
