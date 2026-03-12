@@ -74,5 +74,21 @@ docker-compose dc.yaml logs app
 - Server is running on port : 3000
 ### 5. Use the API
 - The service will be available at http://localhost:3000.
-- See the API Usage section below.
+
+### API Usage
+#### Shorten a URL
+- POST /shorten
+- Request body (JSON):
+```bash
+{
+  "longUrl": "https://example.com/very/long/path",
+}
+```
+- Respose :
+```bash
+{
+  "shortUrl": "http://localhost:3000/abc123",
+}
+```
+
 
