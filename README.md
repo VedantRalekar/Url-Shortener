@@ -1,7 +1,7 @@
 # URL Shortener Service
 
 A high‑performance URL shortener built with **Node.js**, **Express**, **Redis**, and **MongoDB Atlas**.  
-Designed to run locally with Docker Compose and deploy seamlessly on [Render](https://render.com).
+Designed to run locally with Docker Compose. 
 
 ---
 
@@ -24,7 +24,6 @@ Designed to run locally with Docker Compose and deploy seamlessly on [Render](ht
 - **Database:** MongoDB Atlas (primary storage)
 - **Cache / Fast Lookups:** Redis
 - **Container:** Docker, Docker Compose
-- **Deployment:** Render (Web Service + Managed Redis)
 
 ---
 
@@ -32,7 +31,6 @@ Designed to run locally with Docker Compose and deploy seamlessly on [Render](ht
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) (for local development)
 - A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster (free tier works)
-- (Optional) A [Render](https://render.com) account for deployment
 
 ---
 
