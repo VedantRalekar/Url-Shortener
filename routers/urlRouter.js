@@ -5,9 +5,9 @@ const urlModel = require("../models/url");
 const shortid = require("shortid");
 const redisClient = require("../config/redisClient");
 const rateLimiter = require("../middlewares/rateLimiter");
+const isLoggedIn = require("../middlewares/isLoggedIn");
 
-
-router.get("/:shortCode",async function(req, res){
+router.get("/:shortCode", async function(req, res){
    const shortCode = req.params.shortCode;
    try {
         const cachedUrl = await redisClient.get(`short:${shortCode}`);

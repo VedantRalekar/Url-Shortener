@@ -1,161 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
-     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #bcbccd;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Shortener</title>
 
-        .container {
-            background-color: #c4c4e8;
-            padding: 60px;
-            border-radius: 12px;
-            box-shadow: 0px 0px 20px rgba(177, 202, 228, 0.5);
-            width: 500px;
-            text-align: center;
-            animation: fadeIn 1s ease-in-out, pulseBorder 3s infinite;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
+body{
+    background:#eef2ff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* Navbar */
+.navbar{
+    position:absolute;
+    top:20px;
+    right:20px;
+}
 
-        @keyframes pulseBorder {
-            0% {
-                box-shadow: 0px 0px 20px rgba(94, 143, 193, 0.5);
-            }
+.logout-btn{
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    transition:.3s;
+}
 
-            50% {
-                box-shadow: 0px 0px 30px rgba(99, 144, 190, 0.7);
-            }
+.logout-btn:hover{
+    background:#b02a37;
+}
 
-            100% {
-                box-shadow: 0px 0px 20px rgba(82, 128, 175, 0.5);
-            }
-        }
+.container{
+    width:500px;
+    background:#fff;
+    padding:35px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
 
-        h1 {
-            color: #2d2d2d;
-            margin-bottom: 30px;
-            font-size: 28px;
-            animation: slideIn 1s ease-in-out;
-        }
+h1{
+    text-align:center;
+    color:#333;
+    margin-bottom:25px;
+}
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
+.form-group{
+    margin-bottom:20px;
+}
 
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
+label{
+    display:block;
+    margin-bottom:8px;
+    color:#444;
+    font-weight:600;
+}
 
-        label {
-            display: block;
-            margin-bottom: 15px;
-            font-size: 22px;
-            font-weight: bold;
-            color: #5a5a5c;
-            animation: fadeIn 1s ease-in-out;
-        }
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+    transition:.3s;
+}
 
-        input[type="text"] {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 25px;
-            border-radius: 8px;
-            border: 2px solid #c7c7f0;
-            background-color: #b8b8de;
-            color: #d8cee2;
-            font-size: 20px;
-            transition: border-color 0.3s;
-            animation: slideIn 1s ease-in-out;
-        }
+input:focus{
+    outline:none;
+    border-color:#4f46e5;
+    box-shadow:0 0 5px rgba(79,70,229,.3);
+}
 
-        input[type="text"]:focus {
-            border-color: #c0bdc5;
-            outline: none;
-        }
+button{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:8px;
+    background:#4f46e5;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+    transition:.3s;
+}
 
-        button {
-            padding: 16px 32px;
-            background-color: #9db07a;
-            color: #0a0909;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: background-color 0.3s;
-            animation: fadeIn 1s ease-in-out;
-        }
+button:hover{
+    background:#4338ca;
+}
 
-        button:hover {
-            background-color: #8b46c0;
-            color: white;
-        }
+.result{
+    margin-top:30px;
+    padding:18px;
+    background:#f5f7ff;
+    border-left:5px solid #4f46e5;
+    border-radius:10px;
+}
 
-        p {
-            color: black;
-            margin-top: 25px;
-            font-size: 22px;
-            font-weight: bold;
-            animation: slideIn 1s ease-in-out;
-        }
+.result h3{
+    color:#333;
+    margin-bottom:10px;
+}
 
-        a {
-            color: #535550;
-            text-decoration: none;
-            font-weight: bold;
-        }
+.result a{
+    color:#4f46e5;
+    text-decoration:none;
+    word-break:break-all;
+}
 
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+.result a:hover{
+    text-decoration:underline;
+}
+
+.copy-btn{
+    margin-top:15px;
+    width:auto;
+    padding:10px 18px;
+    font-size:15px;
+}
+
+</style>
 
 </head>
 <body>
-   <div class="container">
-    <h1>URL Shortener</h1>
-    <form action="/url/shorten" method="post">
-        <label for="longUrl">Enter Long URL :</label>
-        <input type="text" id="longUrl" name="longUrl" required>
-        <button type="submit">Submit</button>
+
+<!-- Logout Button -->
+<div class="navbar">
+    <form action="/user/logout" method="POST">
+        <button type="submit" class="logout-btn">
+            Logout
+        </button>
+    </form>
+</div>
+
+<div class="container">
+
+    <h1>🔗 URL Shortener</h1>
+
+    <form action="/url/shorten" method="POST">
+ 
+        <div class="form-group">
+            <label for="longUrl">Enter Long URL</label>
+
+            <input
+                type="url"
+                id="longUrl"
+                name="longUrl"
+                placeholder="https://example.com"
+                required
+            >
+        </div>
+
+        <button type="submit">
+            Shorten URL
+        </button>
 
     </form>
 
-    <% if(shortUrl) { %>
-        <p>Short Url : <a href="/url/<%=shortUrl %>" target="_blank">
+    <% if(shortUrl){ %>
+
+        <div class="result">
+
+            <h3>Your Short URL</h3>
+
+            <a
+                href="/url/<%= shortUrl %>"
+                target="_blank"
+                id="shortLink"
+            >
                 http://localhost:3000/url/<%= shortUrl %>
-        </a>
-    
-    </p>
+            </a>
 
-   <% } %>
+            <br>
 
-   </div>
-    
+            <button
+                type="button"
+                class="copy-btn"
+                onclick="copyLink()"
+            >
+                📋 Copy Link
+            </button>
+
+        </div>
+
+    <% } %>
+
+</div>
+
+<script>
+function copyLink() {
+    const link = document.getElementById("shortLink").innerText;
+
+    navigator.clipboard.writeText(link)
+        .then(() => {
+            alert("Link copied successfully!");
+        });
+}
+</script>
+
 </body>
 </html>

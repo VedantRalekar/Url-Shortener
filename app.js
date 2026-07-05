@@ -2,14 +2,18 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const path = require('path');
+const cookieParser = require("cookie-parser");
+
 const connect = require("./config/mongoose-connection");
 
 const urlModel  =  require("./models/url")
 // const client = require("./config/redisClient");
 
 const urlRouter = require("./routers/urlRouter");
+const userRouter = require("./routers/userRouter");
+const isLoggedIn = require("./middlewares/isLoggedIn");
 
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname,"public")));
@@ -20,9 +24,9 @@ app.set("view engine", "ejs");
 
 
 require("dotenv").config();
-console.log('MONGO_URL from env:', process.env.MONGO_URL);
+// console.log('MONGO_URL from env:', process.env.MONGO_URL);
 
-app.get("/", (req, res) =>{
+app.get("/" ,isLoggedIn , (req, res) =>{
     res.render("index",{shortUrl : null});
 });
 
@@ -33,7 +37,8 @@ app.get("/", (req, res) =>{
 // }
 // start();
 
-app.use("/url", urlRouter);
+app.use("/url", isLoggedIn, urlRouter);
+app.use("/user", userRouter);
 
 app.listen(PORT, () =>{
     console.log(`Server is running on port : ${PORT}`);
