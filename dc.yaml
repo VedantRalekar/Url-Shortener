@@ -20,11 +20,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - PORT=3000
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - MONGO_URL=mongodb+srv://ralekaru_db_user:Vedant123@cluster0.ri6l8li.mongodb.net/?appName=Cluster0
-
+        PORT: ${PORT}
+        REDIS_HOST: ${REDIS_HOST}
+        REDIS_PORT: ${REDIS_PORT}
+        MONGO_URL: ${MONGO_URL}
+        
     depends_on:
       - redis
     networks:
