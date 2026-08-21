@@ -10,19 +10,45 @@ const isLoggedIn = require("../middlewares/isLoggedIn");
 router.get("/:shortCode", async function(req, res){
    const shortCode = req.params.shortCode;
    try {
-        const cachedUrl = await redisClient.get(`short:${shortCode}`);
-            if(cachedUrl){
-                return res.redirect(cachedUrl); 
-            }
+        // const cachedUrl = await redisClient.get(`short:${shortCode}`);
+        //     if(cachedUrl){
+        //         return res.redirect(cachedUrl); 
+        //     }
 
-            const urlDoc = await urlModel.findOne({ shortCode });
-                if (!urlDoc) {
-                    return res.status(404).send('Short URL not found');
-                }
-            //Store in Redis with 24h TTL
-            await redisClient.setEx(`short:${shortCode}`,86400, urlDoc.longUrl);
+        //     const urlDoc = await urlModel.findOne({ shortCode });
+        //         if (!urlDoc) {
+        //             return res.status(404).send('Short URL not found');
+        //         }
+        //     //Store in Redis with 24h TTL
+        //     await redisClient.setEx(`short:${shortCode}`,86400, urlDoc.longUrl);
 
-           return  res.redirect(urlDoc.longUrl);
+        //    return  res.redirect(urlDoc.longUrl);
+        let cachedUrl = null;
+
+try {
+    cachedUrl = await redisClient.get(`short:${shortCode}`);
+} catch (err) {
+    console.log("Redis unavailable:", err.message);
+}
+
+if (cachedUrl) {
+    return res.redirect(cachedUrl);
+}
+
+const urlDoc = await urlModel.findOne({ shortCode });
+
+if (!urlDoc) {
+    return res.status(404).send("Not found");
+}
+
+// Try caching, but don't fail if it doesn't work
+try {
+    await redisClient.setEx(`short:${shortCode}`, 86400, urlDoc.longUrl);
+} catch (err) {
+    console.log("Redis cache failed:", err.message);
+}
+
+return res.redirect(urlDoc.longUrl);
     } catch(error){
     
      console.log(error.message);
@@ -60,7 +86,12 @@ router.post("/shorten",rateLimiter({windowSeconds: 60, maxRequests: 5, keyPrefix
             const  newurl = new urlModel({shortCode, longUrl});
             await newurl.save();
             
-            await redisClient.setEx(`short:${shortCode}`, 86400, longUrl);
+            // await redisClient.setEx(`short:${shortCode}`, 86400, longUrl);
+            try {
+    await redisClient.setEx(`short:${shortCode}`, 86400, longUrl);
+} catch (err) {
+    console.log("Redis unavailable:", err.message);
+}
             return res.render("index", {shortUrl : shortCode })
     } catch(error){
         console.error('Create error:', error);
