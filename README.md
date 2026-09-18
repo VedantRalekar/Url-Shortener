@@ -25,6 +25,11 @@ The system was load tested through Nginx with **1M+ HTTP requests at 1K concurre
 - **Container:** Docker, Docker Compose
 - **Load balancer:** Nginx
 
+##  Architecture
+<p> 
+     <img src="url_shortener_architecture.png" width="100%"/>
+</p>
+
 ---
 
 ## Prerequisites
