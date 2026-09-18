@@ -1,22 +1,21 @@
 # URL Shortener Service
 
-A high‑performance URL shortener built with **Node.js**, **Express**, **Redis**, and **MongoDB Atlas**.  
-Designed to run locally with Docker Compose. 
+A scalable **URL Shortener** built with **Node.js, Express.js, MongoDB, Redis, Docker, and Nginx**. The application provides secure user authentication, URL shortening, fast redirects, rate limiting, and persistent data storage.
+The backend is **horizontally scaled across 6 Dockerized Node.js replicas**, with **Nginx** acting as a load balancer to distribute incoming HTTP traffic. **Redis** is used for caching and rate limiting, while **MongoDB** provides persistent storage.
+The system was load tested through Nginx with **1M+ HTTP requests at 1K concurrency**, achieving **~848 requests/sec with 100% successful responses**.
 
----
+### Key Features
 
-## Features
-
-- Shorten long URLs with auto‑generated short codes (base62 encoded)
-- Support for custom short codes
-- Optional expiry time for links
-- Redirect to original URL with 301 (permanent) redirects
-- Persistent storage with MongoDB Atlas
-- In‑memory caching with Redis for ultra‑fast lookups
-- Fully containerized with Docker
-- Ready for production deployment on Render
-
----
+- 🔗 URL shortening and fast redirection
+- 🔐 JWT-based authentication with bcrypt
+- ⚡ Redis caching for frequently accessed URLs
+- 🚦 Redis-based rate limiting
+- 🐳 Dockerized application
+- ⚖️ Nginx load balancing
+- 📈 Horizontal scaling with 6 Node.js replicas
+- 🗄️ MongoDB persistent storage
+- 📊 Load testing with throughput and latency metrics
+- 🛡️ User authentication and protected routes
 
 ## Tech Stack
 
@@ -24,6 +23,7 @@ Designed to run locally with Docker Compose.
 - **Database:** MongoDB Atlas (primary storage)
 - **Cache / Fast Lookups:** Redis
 - **Container:** Docker, Docker Compose
+- **Load balancer:** Nginx
 
 ---
 
@@ -48,6 +48,10 @@ MONGO_URL=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/url-shortene
 REDIS_HOST=redis
 REDIS_PORT=6379
 PORT=3000
+JWT_SECRET=
+NGINX_CONTAINER_NAME=nginx_load_balancer
+NGINX_PORT=80
+PROJECT_NAME=url-shortener
 ```
 - Replace <username>, <password>, and <cluster> with your MongoDB Atlas credentials.
 - If your password contains special characters, URL‑encode them (e.g., @ → %40).
@@ -88,5 +92,54 @@ docker-compose dc.yaml logs app
   "shortUrl": "http://localhost:3000/abc123",
 }
 ```
+## Load Testing
 
+The application was tested through the Nginx load balancer with 6 Dockerized Node.js replicas.
+
+### Run the Application
+
+Start the application with 6 replicas:
+
+
+```
+docker compose -f dc.yaml up -d --scale app=6
+```
+Verify the running containers:
+```
+docker ps
+```
+Expected setup:
+- 6 × Node.js application replicas
+- 1 × Nginx load balancer
+- 1 × Redis
+
+Run Load Test
+Navigate to the test directory:
+
+```
+cd tests
+node loadtest.js
+```
+
+- **Load Balancer:** Nginx
+- **Application Replicas:** 6
+- **Total Requests:** 1,000,000
+- **Concurrency:** 1,000
+- **Endpoints:** `/user/login`,`/user/register/`,`/user/logout/`,`/`
+- **Load Testing:** Node.js HTTP client
+
+### Results
+
+| Metric | Result |
+|---|---:|
+| Total Requests | 1,000,000 |
+| Concurrency | 1,000 |
+| Successful Responses | 1,000,000 |
+| 4xx Errors | 0 |
+| 5xx Errors | 0 |
+| Network Failures | 0 |
+| Throughput | ~848 req/s |
+| Test Duration | ~1,179 sec |
+
+The tests demonstrate horizontal scaling and Nginx-based load balancing across 6 Node.js replicas, successfully processing 1M+ HTTP requests at 1K concurrency.
 
