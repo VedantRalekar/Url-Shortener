@@ -21,7 +21,7 @@ module.exports = async function(req, res, next){
 
    } catch(error){
 
-    console.log("Something went's wrong..", error.message)
-    return res.send("Something went's wrong...", error.message);
+    console.log("Something went's wrong..", error.message);
+    return res.render("login");
    }
 }

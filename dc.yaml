@@ -1,39 +1,71 @@
-version: '3.8'
-
+name: "${PROJECT_NAME}"
 services:
+
+  # Redis
   redis:
     image: redis:alpine
     container_name: url-shortener-redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
+
     volumes:
       - redis-data:/data
+
     command: redis-server --appendonly yes
     networks:
       - url-network
 
+  # Application
   app:
-    build: .
-    container_name: url-shortener-app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    env_file:
+      - .env
+
+    pull_policy: build
+
     environment:
-        PORT: ${PORT}
-        REDIS_HOST: ${REDIS_HOST}
-        REDIS_PORT: ${REDIS_PORT}
-        MONGO_URL: ${MONGO_URL}
-        
+      PORT: ${PORT}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      MONGO_URL: ${MONGO_URL}
+
+    expose:
+      - "${PORT}"
     depends_on:
       - redis
     networks:
       - url-network
 
+    # Run multiple instances of the app.
+    deploy:
+      replicas: 6
+
+  # Nginx Load Balancer
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+
+    container_name: url-shortener-nginx
+
+    env_file:
+      - .env
+    ports:
+      - "${NGINX_PORT}:${NGINX_PORT}"
+    depends_on:
+      - app
+    networks:
+      - url-network
+
+
+# Volume
 volumes:
   redis-data:
     driver: local
 
+# Network
 networks:
   url-network:
     driver: bridge

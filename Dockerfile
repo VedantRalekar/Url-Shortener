@@ -1,14 +1,15 @@
-FROM node
+FROM node:20-alpine
 
-ENV PORT=3000 
+WORKDIR /urlShortner
 
-RUN mkdir -p urlShortner
+ENV PORT=3000
 
 COPY package*.json ./
 
 RUN npm install
 
-COPY . /urlShortner
+COPY . .
 
-CMD ["node", "/urlShortner/app.js"]
+EXPOSE 3000
 
+CMD ["npm", "start"]

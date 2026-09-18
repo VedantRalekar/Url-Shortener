@@ -25,31 +25,34 @@ router.get("/:shortCode", async function(req, res){
         //    return  res.redirect(urlDoc.longUrl);
         let cachedUrl = null;
 
-try {
-    cachedUrl = await redisClient.get(`short:${shortCode}`);
-} catch (err) {
-    console.log("Redis unavailable:", err.message);
-}
+   try {
+            
+         cachedUrl = await redisClient.get(`short:${shortCode}`);
 
-if (cachedUrl) {
-    return res.redirect(cachedUrl);
-}
+        }catch(err){
+            console.log("Redis unavailable:", err.message);
+         }
 
-const urlDoc = await urlModel.findOne({ shortCode });
+        if(cachedUrl){
+            return res.redirect(cachedUrl);
+         }
 
-if (!urlDoc) {
-    return res.status(404).send("Not found");
-}
+        const urlDoc = await urlModel.findOne({ shortCode });
 
-// Try caching, but don't fail if it doesn't work
-try {
-    await redisClient.setEx(`short:${shortCode}`, 86400, urlDoc.longUrl);
-} catch (err) {
-    console.log("Redis cache failed:", err.message);
-}
+        if(!urlDoc){
+            return res.status(404).send("Not found");
+         }
 
-return res.redirect(urlDoc.longUrl);
-    } catch(error){
+        // Try caching, but don't fail if it doesn't work
+        try {
+            await redisClient.setEx(`short:${shortCode}`, 86400, urlDoc.longUrl);
+        }catch(err){
+            console.log("Redis cache failed:", err.message);
+        }
+
+        return res.redirect(urlDoc.longUrl);
+
+      }catch(error){
     
      console.log(error.message);
      return res.status(500).send("Server error..");
@@ -65,7 +68,7 @@ router.post("/shorten",rateLimiter({windowSeconds: 60, maxRequests: 5, keyPrefix
  
     const longUrl = req.body.longUrl;
     
-    if(!longUrl) {
+    if(!longUrl){
         return res.status(400).send('longUrl is required');
     }
     try{
@@ -76,8 +79,6 @@ router.post("/shorten",rateLimiter({windowSeconds: 60, maxRequests: 5, keyPrefix
             await redisClient.setEx(`short:${existing.shortCode}`,86400, existing.longUrl);
             return res.render("index", {shortUrl : existing.shortCode });
         }
-
-
         
            while(await urlModel.exists({ shortCode })){
                 shortCode = shortid.generate();
@@ -87,17 +88,20 @@ router.post("/shorten",rateLimiter({windowSeconds: 60, maxRequests: 5, keyPrefix
             await newurl.save();
             
             // await redisClient.setEx(`short:${shortCode}`, 86400, longUrl);
-            try {
-    await redisClient.setEx(`short:${shortCode}`, 86400, longUrl);
-} catch (err) {
-    console.log("Redis unavailable:", err.message);
-}
-            return res.render("index", {shortUrl : shortCode })
-    } catch(error){
-        console.error('Create error:', error);
-       return  res.status(500).send({ error: 'Server error' });
-    }
-});
+            try{
+                  await redisClient.setEx(`short:${shortCode}`, 86400, longUrl);
+                }catch (err){
+                    console.log("Redis unavailable:", err.message);
+                }
+
+                 return res.render("index", {shortUrl : shortCode })
+
+            } catch(error){
+                console.error('Create error:', error);
+                return  res.status(500).send({ error: 'Server error' });
+            }
+
+        });
 
 
 module.exports = router;

@@ -3,6 +3,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const path = require('path');
 const cookieParser = require("cookie-parser");
+const os = require("os");
 
 const connect = require("./config/mongoose-connection");
 
@@ -18,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname,"public")));
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static("public"));
+// app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 
@@ -40,7 +41,17 @@ app.get("/" ,isLoggedIn , (req, res) =>{
 app.use("/url", isLoggedIn, urlRouter);
 app.use("/user", userRouter);
 
-app.listen(PORT, () =>{
+//Testing purpose route 
+app.get("/server-info", (req, res) => {
+    res.json({
+        hostname: os.hostname(),
+        pid: process.pid,
+        port: PORT
+    });
+});
+
+
+app.listen(PORT, "0.0.0.0", () =>{
     console.log(`Server is running on port : ${PORT}`);
 });
 
